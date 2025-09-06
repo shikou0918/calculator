@@ -21,12 +21,21 @@ const previousValue = ref<number | null>(null)
 const operation = ref<Operation>(null)
 const waitingForNewValue = ref<boolean>(false)
 
+
 const inputNumber = (num: string): void => {
   if (waitingForNewValue.value) {
-    display.value = num
+    // 演算子の後の数値入力
+    display.value = display.value + num
     waitingForNewValue.value = false
   } else {
-    display.value = display.value === '0' ? num : display.value + num
+    // 通常の数値入力
+    if (display.value.includes(' ')) {
+      // 既に式がある場合は末尾に追加
+      display.value = display.value + num
+    } else {
+      // 新しい数値入力
+      display.value = display.value === '0' ? num : display.value + num
+    }
   }
 }
 
@@ -39,24 +48,36 @@ const inputDecimal = (): void => {
   }
 }
 
+// 四則演算
 const inputOperator = (nextOperation: Operation): void => {
-  const inputValue = parseFloat(display.value)
+  const inputValue = parseFloat(display.value.split(' ')[0])
 
   if (previousValue.value === null) {
     previousValue.value = inputValue
-  } else if (operation.value) {
+  } else if (operation.value && !waitingForNewValue.value) {
     const newValue = performCalculation()
-    display.value = formatResult(newValue)
     previousValue.value = newValue
+    display.value = formatResult(newValue)
   }
 
+  // 演算子をディスプレイに表示
+  const operatorSymbol = nextOperation === '*' ? '×' : nextOperation === '/' ? '÷' : nextOperation
+  if (!display.value.includes(' ')) {
+    display.value = display.value + ' ' + operatorSymbol + ' '
+  } else {
+    // 既に演算子がある場合は置き換え
+    display.value = display.value.split(' ')[0] + ' ' + operatorSymbol + ' '
+  }
+  
   waitingForNewValue.value = true
   operation.value = nextOperation
 }
 
 const performCalculation = (): number => {
   const prev = previousValue.value!
-  const current = parseFloat(display.value)
+  // 式から現在の値を抽出 (例: "8 + 8" から "8" を取得)
+  const parts = display.value.split(' ')
+  const current = parseFloat(parts[parts.length - 1])
 
   switch (operation.value) {
     case '+':
