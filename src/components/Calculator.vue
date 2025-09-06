@@ -1,43 +1,20 @@
-<template>
-  <div class="calculator">
-    <input 
-      type="text" 
-      class="display" 
-      :value="display" 
-      readonly
-    >
-    <div class="buttons">
-      <button @click="clear" class="function">AC</button>
-      <button @click="toggleSign" class="function">±</button>
-      <button @click="percentage" class="function">%</button>
-      <button @click="inputOperator('/')" class="operator">÷</button>
-      
-      <button @click="inputNumber('7')" class="number">7</button>
-      <button @click="inputNumber('8')" class="number">8</button>
-      <button @click="inputNumber('9')" class="number">9</button>
-      <button @click="inputOperator('*')" class="operator">×</button>
-      
-      <button @click="inputNumber('4')" class="number">4</button>
-      <button @click="inputNumber('5')" class="number">5</button>
-      <button @click="inputNumber('6')" class="number">6</button>
-      <button @click="inputOperator('-')" class="operator">-</button>
-      
-      <button @click="inputNumber('1')" class="number">1</button>
-      <button @click="inputNumber('2')" class="number">2</button>
-      <button @click="inputNumber('3')" class="number">3</button>
-      <button @click="inputOperator('+')" class="operator">+</button>
-      
-      <button @click="inputNumber('0')" class="number zero">0</button>
-      <button @click="inputDecimal" class="number">.</button>
-      <button @click="calculate" class="equals">=</button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 
 type Operation = '+' | '-' | '*' | '/' | null
+type ButtonType = 'function' | 'operator' | 'number' | 'equals'
+
+interface Button {
+  label: string
+  type: ButtonType
+  action: () => void
+  class?: string
+}
+
+// Constants
+const MAX_DISPLAY_LENGTH = 12
+const DECIMAL_PLACES = 8
+const EXPONENTIAL_PRECISION = 6
 
 const display = ref<string>('0')
 const previousValue = ref<number | null>(null)
@@ -100,11 +77,11 @@ const formatResult = (value: number): string => {
   if (!isFinite(value)) return 'Error'
   
   const str = value.toString()
-  if (str.length > 12) {
+  if (str.length > MAX_DISPLAY_LENGTH) {
     if (value < 1 && value > -1) {
-      return value.toFixed(8)
+      return value.toFixed(DECIMAL_PLACES)
     }
-    return value.toExponential(6)
+    return value.toExponential(EXPONENTIAL_PRECISION)
   }
   return str
 }
@@ -135,7 +112,57 @@ const percentage = (): void => {
   const value = parseFloat(display.value)
   display.value = formatResult(value / 100)
 }
+
+// Button configuration
+const buttons: Button[] = [
+  // Row 1
+  { label: 'AC', type: 'function', action: clear },
+  { label: '±', type: 'function', action: toggleSign },
+  { label: '%', type: 'function', action: percentage },
+  { label: '÷', type: 'operator', action: () => inputOperator('/') },
+  // Row 2
+  { label: '7', type: 'number', action: () => inputNumber('7') },
+  { label: '8', type: 'number', action: () => inputNumber('8') },
+  { label: '9', type: 'number', action: () => inputNumber('9') },
+  { label: '×', type: 'operator', action: () => inputOperator('*') },
+  // Row 3
+  { label: '4', type: 'number', action: () => inputNumber('4') },
+  { label: '5', type: 'number', action: () => inputNumber('5') },
+  { label: '6', type: 'number', action: () => inputNumber('6') },
+  { label: '-', type: 'operator', action: () => inputOperator('-') },
+  // Row 4
+  { label: '1', type: 'number', action: () => inputNumber('1') },
+  { label: '2', type: 'number', action: () => inputNumber('2') },
+  { label: '3', type: 'number', action: () => inputNumber('3') },
+  { label: '+', type: 'operator', action: () => inputOperator('+') },
+  // Row 5
+  { label: '0', type: 'number', action: () => inputNumber('0'), class: 'zero' },
+  { label: '.', type: 'number', action: inputDecimal },
+  { label: '=', type: 'equals', action: calculate }
+]
 </script>
+
+<template>
+  <div class="calculator">
+    <input 
+      type="text" 
+      class="display" 
+      :value="display" 
+      readonly
+    >
+    <div class="buttons">
+      <button 
+        v-for="(button, index) in buttons" 
+        :key="index"
+        @click="button.action"
+        :class="[button.type, button.class]"
+      >
+        {{ button.label }}
+      </button>
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .calculator {
