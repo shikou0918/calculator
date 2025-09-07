@@ -42,7 +42,7 @@ const inputNumber = (num: string): void => {
 // 小数点ボタンが押されたときの処理
 const inputDecimal = (): void => {
   if (waitingForNewValue.value) {
-    display.value = "0.";
+    display.value += "0.";
     waitingForNewValue.value = false;
   } else if (display.value.indexOf(".") === -1) {
     display.value += ".";
