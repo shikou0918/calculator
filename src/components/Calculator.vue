@@ -51,6 +51,11 @@ const inputDecimal = (): void => {
 
 // 演算子ボタンが押されたときの処理
 const inputOperator = (nextOperation: Operation): void => {
+  // 演算子が連続で押された場合、追加で表示されないよう早期return
+  if (display.value.split(" ").slice(-1)[0] == "") {
+    return
+  }
+
   // 演算子をディスプレイに表示
   let operatorSymbol;
   switch (nextOperation) {
