@@ -17,7 +17,6 @@ const DECIMAL_PLACES = 8;
 const EXPONENTIAL_PRECISION = 6;
 
 const display = ref<string>("0");
-const previousValue = ref<number | null>(null);
 const operation = ref<Operation>(null);
 const waitingForNewValue = ref<boolean>(false);
 
@@ -52,15 +51,6 @@ const inputDecimal = (): void => {
 
 // 演算子ボタンが押されたときの処理
 const inputOperator = (nextOperation: Operation): void => {
-  // 入力された数字
-  const inputValue = parseFloat(display.value.split(" ")[0]);
-
-  //
-  if (previousValue.value === null) {
-    previousValue.value = inputValue;
-  }
-
-
   // 演算子をディスプレイに表示
   let operatorSymbol;
   switch (nextOperation) {
@@ -126,10 +116,9 @@ const formatResult = (value: number): string => {
 const calculate = (): void => {
   // 最初に入力した数値が表示かつ最後に表示されている数値が演算子ではない
   const displayArray = display.value.split(" ");
-  if (previousValue.value !== null && displayArray.slice(-1)[0] !== "") {
+  if (displayArray.slice(-1)[0] !== "") {
     const newValue = performCalculation(displayArray);
     display.value = formatResult(newValue);
-    previousValue.value = null;
     operation.value = null;
     waitingForNewValue.value = true;
   }
@@ -138,7 +127,6 @@ const calculate = (): void => {
 // ACボタンが押されたときの処理（全クリア）
 const clear = (): void => {
   display.value = "0";
-  previousValue.value = null;
   operation.value = null;
   waitingForNewValue.value = false;
 };
