@@ -7,18 +7,21 @@ export default {
   },
   transform: {
     '^.+\\.vue$': '@vue/vue3-jest',
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: true
-    }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
   },
   moduleFileExtensions: ['vue', 'js', 'ts', 'json'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(js|jsx|ts|tsx)',
-    '<rootDir>/src/**/*.(test|spec).(js|jsx|ts|tsx)'
+    '<rootDir>/src/**/*.(test|spec).(js|jsx|ts|tsx)',
   ],
   collectCoverageFrom: [
     'src/**/*.{js,ts,vue}',
     '!src/main.ts',
-    '!src/**/__tests__/**'
-  ]
-};
+    '!src/**/__tests__/**',
+  ],
+}

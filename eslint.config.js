@@ -17,32 +17,51 @@ export default [
         parser: typescriptParser,
         ecmaVersion: 'latest',
         sourceType: 'module',
-        extraFileExtensions: ['.vue']
-      }
+        extraFileExtensions: ['.vue'],
+      },
     },
     plugins: {
       '@typescript-eslint': typescript,
       vue,
-      prettier
+      prettier,
     },
     rules: {
       ...typescript.configs.recommended.rules,
       ...prettierConfig.rules,
       'vue/multi-word-component-names': 'off',
       'prettier/prettier': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/explicit-function-return-type': 'off',
-      'vue/html-self-closing': ['error', {
-        html: { void: 'always', normal: 'always', component: 'always' },
-        svg: 'always',
-        math: 'always'
-      }]
-    }
+      'vue/html-self-closing': [
+        'error',
+        {
+          html: { void: 'always', normal: 'always', component: 'always' },
+          svg: 'always',
+          math: 'always',
+        },
+      ],
+    },
   },
   {
     files: ['**/*.test.{js,ts}', '**/*.spec.{js,ts}'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+      },
+    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off'
-    }
-  }
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ]
