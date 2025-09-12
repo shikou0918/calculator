@@ -30,7 +30,7 @@
   }
 
   .display {
-    width: 100%;
+    width: 68%;
     height: 80px;
     font-size: 32px;
     text-align: right;
