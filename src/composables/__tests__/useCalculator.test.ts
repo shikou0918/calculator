@@ -80,7 +80,7 @@ describe('useCalculator', () => {
       buttonPlus.action()
       buttonDecimal.action()
       button3.action()
-      expect(calculator.display.value).toBe('5 + 0.3')
+      expect(calculator.display.value).toBe('5+0.3')
     })
   })
 
@@ -91,7 +91,7 @@ describe('useCalculator', () => {
 
       button5.action()
       buttonPlus.action()
-      expect(calculator.display.value).toBe('5 + ')
+      expect(calculator.display.value).toBe('5+')
     })
 
     it('減算演算子が入力できること', () => {
@@ -100,7 +100,7 @@ describe('useCalculator', () => {
 
       button5.action()
       buttonMinus.action()
-      expect(calculator.display.value).toBe('5 - ')
+      expect(calculator.display.value).toBe('5-')
     })
 
     it('乗算演算子が入力できること', () => {
@@ -111,7 +111,7 @@ describe('useCalculator', () => {
 
       button5.action()
       buttonMultiply.action()
-      expect(calculator.display.value).toBe('5 × ')
+      expect(calculator.display.value).toBe('5×')
     })
 
     it('除算演算子が入力できること', () => {
@@ -122,7 +122,7 @@ describe('useCalculator', () => {
 
       button5.action()
       buttonDivide.action()
-      expect(calculator.display.value).toBe('5 ÷ ')
+      expect(calculator.display.value).toBe('5÷')
     })
 
     it('連続する演算子が入力されないこと', () => {
@@ -133,7 +133,7 @@ describe('useCalculator', () => {
       button5.action()
       buttonPlus.action()
       buttonMinus.action()
-      expect(calculator.display.value).toBe('5 + ')
+      expect(calculator.display.value).toBe('5+')
     })
   })
 
@@ -316,6 +316,93 @@ describe('useCalculator', () => {
       button0.action()
       buttonPercent.action()
       expect(calculator.display.value).toBe('0.5')
+    })
+  })
+
+  describe('del機能', () => {
+    it('ACボタンが数値入力後はdelボタンに変わること', () => {
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+      button5.action()
+      const delButton = calculator.buttons.value.find((b) => b.label === 'del')!
+      expect(delButton).toBeDefined()
+    })
+
+    it('delボタンで最後の文字が削除されること', () => {
+      const button1 = calculator.buttons.value.find((b) => b.label === '1')!
+      const button2 = calculator.buttons.value.find((b) => b.label === '2')!
+      const button3 = calculator.buttons.value.find((b) => b.label === '3')!
+
+      button1.action()
+      button2.action()
+      button3.action()
+      expect(calculator.display.value).toBe('123')
+
+      const delButton = calculator.buttons.value.find((b) => b.label === 'del')!
+      delButton.action()
+      expect(calculator.display.value).toBe('12')
+    })
+
+    it('1文字しかない場合は0にリセットされること', () => {
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+      button5.action()
+      expect(calculator.display.value).toBe('5')
+
+      const delButton = calculator.buttons.value.find((b) => b.label === 'del')!
+      delButton.action()
+      expect(calculator.display.value).toBe('0')
+    })
+
+    it('del後に初期状態に戻ること', () => {
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+      const buttonPlus = calculator.buttons.value.find((b) => b.label === '+')!
+      const button3 = calculator.buttons.value.find((b) => b.label === '3')!
+
+      button5.action()
+      buttonPlus.action()
+      button3.action()
+
+      const delButton = calculator.buttons.value.find((b) => b.label === 'del')!
+      delButton.action()
+      expect(calculator.display.value).toBe('5+')
+    })
+  })
+
+  describe('演算子の後の数値入力', () => {
+    it('演算子の後に数値を入力できること', () => {
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+      const buttonPlus = calculator.buttons.value.find((b) => b.label === '+')!
+      const button3 = calculator.buttons.value.find((b) => b.label === '3')!
+
+      button5.action()
+      buttonPlus.action()
+      button3.action()
+      expect(calculator.display.value).toBe('5+3')
+    })
+
+    it('演算子の後に複数桁の数値を入力できること', () => {
+      const button2 = calculator.buttons.value.find((b) => b.label === '2')!
+      const buttonMultiply = calculator.buttons.value.find((b) => b.label === '×')!
+      const button1 = calculator.buttons.value.find((b) => b.label === '1')!
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+
+      button2.action()
+      buttonMultiply.action()
+      button1.action()
+      button5.action()
+      expect(calculator.display.value).toBe('2×15')
+    })
+  })
+
+  describe('演算子末尾での計算防止', () => {
+    it('演算子で終わる場合は計算されないこと', () => {
+      const button5 = calculator.buttons.value.find((b) => b.label === '5')!
+      const buttonPlus = calculator.buttons.value.find((b) => b.label === '+')!
+      const buttonEquals = calculator.buttons.value.find((b) => b.label === '=')!
+
+      button5.action()
+      buttonPlus.action()
+      buttonEquals.action()
+      expect(calculator.display.value).toBe('5+')
     })
   })
 

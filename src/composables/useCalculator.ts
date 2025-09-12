@@ -90,7 +90,7 @@ export const useCalculator = () => {
   // 演算子ボタンが押されたときの処理
   const inputOperator = (nextOperation: Operation): void => {
     // 演算子が連続で押された場合、追加で表示されないよう早期return
-    if (display.value.split(' ').slice(-1)[0] === '') {
+    if (['+', '-', '×', '÷', '*', '/'].includes(display.value.slice(-1))) {
       return
     }
 
@@ -107,14 +107,20 @@ export const useCalculator = () => {
         operatorSymbol = nextOperation
     }
 
-    display.value = display.value + ' ' + operatorSymbol + ' '
+    display.value = display.value + operatorSymbol
     operation.value = nextOperation
     waitingForNewValue.value = true
   }
 
   // イコールボタンが押されたときの処理
   const calculate = (): void => {
-    const displayArray = display.value.split(' ')
+    const displayArray = display.value.match(/\d+\.?\d*|[×÷+-]/g) || []
+
+    // 最後の入力が演算子の場合、計算されないようにする
+    if (['+', '-', '×', '÷', '*', '/'].includes(display.value.slice(-1))) {
+      return
+    }
+
     if (displayArray.slice(-1)[0] !== '') {
       const newValue = performCalculation(displayArray)
       display.value = formatResult(newValue)
@@ -126,6 +132,20 @@ export const useCalculator = () => {
   // ACボタンが押されたときの処理（全クリア）
   const clear = (): void => {
     display.value = '0'
+    operation.value = null
+    waitingForNewValue.value = false
+  }
+
+  // delボタンが押されたときの処理（最後に入力した文字列を削除）
+  const del = (): void => {
+    if (display.value.length > 1) {
+      // 最後の文字を削除
+      display.value = display.value.slice(0, -1)
+    } else {
+      // 1文字しかない場合は'0'にリセット
+      display.value = '0'
+    }
+
     operation.value = null
     waitingForNewValue.value = false
   }
@@ -144,7 +164,9 @@ export const useCalculator = () => {
 
   const buttons = computed<Button[]>(() => [
     // Row 1
-    { label: 'AC', type: 'function', action: clear },
+    display.value === '0'
+      ? { label: 'AC', type: 'function', action: clear }
+      : { label: 'del', type: 'function', action: del },
     { label: '±', type: 'function', action: toggleSign },
     { label: '%', type: 'function', action: percentage },
     { label: '÷', type: 'operator', action: () => inputOperator('/') },
