@@ -381,7 +381,9 @@ describe('useCalculator', () => {
 
     it('演算子の後に複数桁の数値を入力できること', () => {
       const button2 = calculator.buttons.value.find((b) => b.label === '2')!
-      const buttonMultiply = calculator.buttons.value.find((b) => b.label === '×')!
+      const buttonMultiply = calculator.buttons.value.find(
+        (b) => b.label === '×'
+      )!
       const button1 = calculator.buttons.value.find((b) => b.label === '1')!
       const button5 = calculator.buttons.value.find((b) => b.label === '5')!
 
@@ -397,7 +399,9 @@ describe('useCalculator', () => {
     it('演算子で終わる場合は計算されないこと', () => {
       const button5 = calculator.buttons.value.find((b) => b.label === '5')!
       const buttonPlus = calculator.buttons.value.find((b) => b.label === '+')!
-      const buttonEquals = calculator.buttons.value.find((b) => b.label === '=')!
+      const buttonEquals = calculator.buttons.value.find(
+        (b) => b.label === '='
+      )!
 
       button5.action()
       buttonPlus.action()
